@@ -1,0 +1,11 @@
+---
+# handlers file for celery
+
+- name: celery restart
+  service: state=restarted name="celeryd"
+
+- name: celery reload
+  service: state=reloaded name="celeryd"
+
+- name: celery start
+  service: state=started name="celeryd"

@@ -1,0 +1,33 @@
+# In CentOS, contents should be placed in the file /etc/sysconfig/celeryd
+# Available options: http://celery.readthedocs.org/en/latest/tutorials/daemonizing.html#available-options
+
+# Names of nodes to start (space-separated)
+CELERYD_NODES="{{ celeryd_nodes }}"
+
+# Where to chdir at start. This could be the root of a virtualenv.
+CELERYD_CHDIR="{{ celeryd_chdir }}"
+
+# Absolute or relative path to the celery program
+CELERY_BIN="{{ celery_bin }}"
+
+# App instance to use (value for --app argument).
+CELERY_APP="{{ celery_app }}"
+
+# How to call celeryd-multi
+#CELERYD_MULTI="$CELERYD_CHDIR/bin/celeryd-multi"
+
+# Extra arguments
+#CELERYD_OPTS="--time-limit=300 --concurrency=8 --loglevel=DEBUG"
+
+# Create log/pid dirs, if they don't already exist
+CELERY_CREATE_DIRS=1
+
+# - %n will be replaced with the first part of the nodename.
+# - %I will be replaced with the current child process index
+#   and is important when using the prefork pool to avoid race conditions.
+CELERYD_LOG_FILE="{{ celeryd_log_dir }}/%N.log"
+CELERYD_PID_FILE="{{ celeryd_pid_file }}"
+
+# Workers run as an unprivileged user
+CELERYD_USER="{{ celeryd_user }}"
+CELERYD_GROUP="{{ celeryd_group }}"

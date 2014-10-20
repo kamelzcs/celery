@@ -1,0 +1,38 @@
+---
+# tasks file for celery
+
+- name: create celeryd_group
+  group: name="{{ celeryd_group }}" state=present
+
+- name: create celeryd_user
+  user: name="{{ celeryd_user }}" shell=/bin/bash groups="{{ celeryd_group }}" append=yes
+
+- name: startup script
+  template: >
+    src=upstart.j2
+    dest=/etc/init.d/celeryd
+    owner=root group=root mode=0755
+  notify: celery start
+
+- name: Configure celery
+  template: >
+    src=upstart.conf.j2
+    dest=/etc/default/celeryd
+    owner=root group=root mode=0644
+  notify: celery reload
+
+- name: Prepare log directories
+  file: state=directory dest={{ celeryd_log_dir }} owner={{ celeryd_user }}
+
+- name: Add celery services to start at boot
+  service: >
+      name="celeryd"
+      enabled=yes
+
+#- name: Ensure celery services is started
+  #service: >
+      #name="celeryd"
+      #state=started
+
+#- name: Setup logrotate
+  #template: src=logrotate.conf.j2 dest=/etc/logrotate.d/{{celery_app_name}}-celery.conf
