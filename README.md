@@ -1,38 +1,73 @@
-Role Name
-=========
+celery
+=================
 
-A brief description of the role goes here.
+Ansible role which manage [celery](http://www.celeryproject.org/)
+Ansible role apt which help you with:
 
-Requirements
-------------
+* Install and manage [celery](http://www.celeryproject.org/)
+* Provide handlers for reload and restart celery
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+#### Variables
 
-Role Variables
---------------
+The role variables and default values.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+```yaml
 
-Dependencies
-------------
+# Names of nodes to start (space-separated)
+celeryd_nodes: "default"
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+# Where to chdir at start. This could be the root of a virtualenv.
+celeryd_chdir: "/home/site/src/apps"
 
-Example Playbook
-----------------
+# Absolute or relative path to the celery program
+celery_bin: "/usr/local/bin/celery"
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+# App instance to use (value for --app argument).
+celery_app: "proj.celery:app"
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+# How to call celeryd-multi
+#CELERYD_MULTI:"$CELERYD_CHDIR/bin/celeryd-multi"
 
-License
--------
+# Extra arguments
+#CELERYD_OPTS:"--time-limit=300 --concurrency=8 --loglevel=DEBUG"
 
-BSD
+# Create log/pid dirs, if they don't already exist
+celery_create_dirs: 1
 
-Author Information
-------------------
+# - %n will be replaced with the first part of the nodename.
+# - %I will be replaced with the current child process index
+#   and is important when using the prefork pool to avoid race conditions.
+celeryd_log_dir: "/var/log/celery"
+celeryd_pid_file: "/var/run/celery/%n.pid"
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+# Workers run as an unprivileged user
+celeryd_user: "celery"
+celeryd_group: "celery"
+
+```
+
+#### Usage
+
+Add `kamelzcs.celery` to your roles and set vars in your playbook file.
+
+Example:
+
+```yaml
+
+- hosts: all
+
+  roles:
+    - kamelzcs.celery
+
+  vars:
+    celeryd_user: "celery"
+    celeryd_group: "celery"
+```
+
+#### License
+
+Licensed under the MIT License. See the LICENSE file for details.
+
+#### Feedback, bug-reports, requests, ...
+
+Are [welcome](https://github.com/kamelzcs/celery/issues)!
